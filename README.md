@@ -6,14 +6,13 @@ local Window = Library:CreateWindow{
     Title = `Slash Hub`,
     SubTitle = "",
     TabWidth = 160,
-    Size = UDim2.fromOffset(800, 600),
-    Resize = true,
-    MinSize = Vector2.new(800, 600),
-    Acrylic = true,
+    Size = UDim2.fromOffset(830, 525),
+    Resize = true, -- Resize this ^ Size according to a 1920x1080 screen, good for mobile users but may look weird on some devices
+    MinSize = Vector2.new(470, 380),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
     Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.RightControl
+    MinimizeKey = Enum.KeyCode.RightControl -- Used when theres no MinimizeKeybind
 }
-
 -- Create tabs
 local Tabs = {
     Main = Window:CreateTab{
