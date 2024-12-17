@@ -1,275 +1,200 @@
-local Library = loadstring(game:HttpGetAsync("https://github.com/ActualMasterOogway/Fluent-Renewed/releases/latest/download/Fluent.luau"))()
-local SaveManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/SaveManager.luau"))()
-local InterfaceManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/InterfaceManager.luau"))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
--- Create the Fluent Window
-local Window = Library:CreateWindow{
-    Title = `Slash Hub`,
-    SubTitle = "",
+local Window = Fluent:CreateWindow({
+    Title = "Slash Hub",
+    SubTitle = "by dawid",
     TabWidth = 160,
-    Size = UDim2.fromOffset(830, 525),
-    Resize = true, -- Resize this ^ Size according to a 1920x1080 screen, good for mobile users but may look weird on some devices
-    MinSize = Vector2.new(470, 380),
-    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
     Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.RightControl -- Used when theres no MinimizeKeybind
-}
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
 
--- Create Tabs
 local Tabs = {
-    Main = Window:CreateTab{
-        Title = "Home",
-        Icon = ""
-    },
-    AutoFarm = Window:CreateTab{
-        Title = "Auto Farm",
-        Icon = ""
-    },
-    Killing = Window:CreateTab{
-        Title = "Killing",
-        Icon = ""
-    }
+    Main = Window:AddTab({ Title = "Home", Icon = "" }),
+    AutoFarm = Window:AddTab({ Title = "Auto Farm/Teleport", Icon = "" })
 }
 
-local Options = Library.Options
-
-Library:Notify{
-    Title = "Notification",
-    Content = "Welcome To Slash Hub",
-    SubContent = "SubContent", -- Optional
-    Duration = 5 -- Set to nil to make the notification not disappear
-}
-
--- Create Transparent Toggle Icon
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
--- Create ImageButton (Icon) to toggle transparency
-local toggleButton = Instance.new("ImageButton")
-toggleButton.Size = UDim2.new(0, 50, 0, 50)  -- Size of the icon
-toggleButton.Position = UDim2.new(0.5, -25, 0.5, -25)  -- Center the icon
-toggleButton.BackgroundTransparency = 1  -- No background
-toggleButton.Image = "rbxassetid://95279616007991"  -- Your custom icon ID
-toggleButton.Parent = screenGui
-
-local isTransparent = false  -- Variable to track transparency state
-
--- Function to toggle the transparency of the main window
-local function toggleTransparency()
-    if isTransparent then
-        -- Set the Fluent window to visible
-        Window.BackgroundTransparency = 0
-    else
-        -- Set the Fluent window to transparent
-        Window.BackgroundTransparency = 1
-    end
-    isTransparent = not isTransparent  -- Toggle state
-end
-
--- Connect the button to the toggle function
-toggleButton.MouseButton1Click:Connect(toggleTransparency)
-
--- Track window minimize state
-local isMinimized = false
-
--- Function to handle when the window is minimized
-Window.Minimize = function()
-    isMinimized = true
-    -- When minimized, set Fluent window to transparent
-    Window.BackgroundTransparency = 1
-end
-
--- Function to restore visibility when the icon is clicked
-toggleButton.MouseButton1Click:Connect(function()
-    if isMinimized then
-        -- If minimized, restore the window and make it visible
-        isMinimized = false
-        Window.BackgroundTransparency = 0
-    end
-    -- If not minimized, toggle the transparency as usual
-    toggleTransparency()
-end)
-
--- Your existing AutoFarm, Killing, and other sections would go here...
-
--- Example AutoFarm Toggle
-local AutoWeightToggle = Tabs.AutoFarm:CreateToggle("AutoWeight", {
-    Title = "Auto Weight",
-    Default = false
+Tabs.Main:AddParagraph({
+    Title = "Discord Server Link:",
+    Content = "Click the button below to copy the Discord Server Link!\nLink: https://discord.gg/RHJECBgy"
 })
 
-AutoWeightToggle:OnChanged(function()
-    if AutoWeightToggle.Value then
-        -- Start auto weight (equip tool and use it)
-        while AutoWeightToggle.Value do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-                -- Assuming the tool has an action to activate, you may need to simulate using the tool
-                tool:Activate() -- This might differ depending on the actual tool's script
-            end
-            wait(0.3) -- Use tool every 0.3 seconds
-        end
+Tabs.Main:AddButton({
+    Title = "Copy Discord Server Link",
+    Description = "Copies the Discord server link to your clipboard.",
+    Callback = function()
+        setclipboard("https://discord.gg/RHJECBgy")
+        
+        Window:Dialog({
+            Title = "Link Copied",
+            Content = "The Discord Server Link has been copied to your clipboard.",
+            Buttons = {
+                {
+                    Title = "OK",
+                    Callback = function() end
+                }
+            }
+        })
     end
-end)
-
--- Auto Pushups Toggle
-local AutoPushupsToggle = Tabs.AutoFarm:CreateToggle("AutoPushups", {
-    Title = "Auto Pushups",
-    Default = false
 })
 
-AutoPushupsToggle:OnChanged(function()
-    if AutoPushupsToggle.Value then
-        -- Start auto pushups (equip tool and use it)
-        while AutoPushupsToggle.Value do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Pushups")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-                -- Assuming the tool has an action to activate, you may need to simulate using the tool
-                tool:Activate() -- This might differ depending on the actual tool's script
-            end
-            wait(0.3) -- Use tool every 0.3 seconds
-        end
+Tabs.Main:AddParagraph({
+    Title = "LocalPlayer",
+    Content = "Modify the settings below to adjust your character's movement and jump."
+})
+
+-- WalkSpeed Slider
+local WalkSpeedSlider = Tabs.Main:AddSlider("WalkSpeed", {
+    Title = "WalkSpeed",
+    Description = "Set the WalkSpeed for the player.",
+    Default = 16,
+    Min = 16,
+    Max = 1000,
+    Rounding = 1,
+    Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
     end
-end)
-
--- Auto Handstands Toggle
-local AutoHandstandsToggle = Tabs.AutoFarm:CreateToggle("AutoHandstands", {
-    Title = "Auto Handstands",
-    Default = false
 })
 
-AutoHandstandsToggle:OnChanged(function()
-    if AutoHandstandsToggle.Value then
-        -- Start auto handstands (equip tool and use it)
-        while AutoHandstandsToggle.Value do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Handstands")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-                -- Assuming the tool has an action to activate, you may need to simulate using the tool
-                tool:Activate() -- This might differ depending on the actual tool's script
-            end
-            wait(0.3) -- Use tool every 0.3 seconds
-        end
+-- JumpPower Slider
+local JumpPowerSlider = Tabs.Main:AddSlider("JumpPower", {
+    Title = "JumpPower",
+    Description = "Set the JumpPower for the player.",
+    Default = 50,
+    Min = 40,
+    Max = 1000,
+    Rounding = 1,
+    Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
     end
-end)
-
--- Auto Situps Toggle
-local AutoSitupsToggle = Tabs.AutoFarm:CreateToggle("AutoSitups", {
-    Title = "Auto Situps",
-    Default = false
 })
 
-AutoSitupsToggle:OnChanged(function()
-    if AutoSitupsToggle.Value then
-        -- Start auto situps (equip tool and use it)
-        while AutoSitupsToggle.Value do
-            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Situps")
-            if tool then
-                tool.Parent = game.Players.LocalPlayer.Character
-                -- Assuming the tool has an action to activate, you may need to simulate using the tool
-                tool:Activate() -- This might differ depending on the actual tool's script
-            end
-            wait(0.3) -- Use tool every 0.3 seconds
-        end
-    end
-end)
-
--- Killing Section
--- Create Whitelist Dropdown in "Killing" Tab
-local PlayersList = {}  -- Will hold the list of all players
-for _, player in pairs(game.Players:GetPlayers()) do
-    table.insert(PlayersList, player.Name)
-end
-
-local WhitelistDropdown = Tabs.Killing:CreateDropdown("Whitelist", {
-    Title = "Whitelist A Player",
-    Values = PlayersList,
-    Multi = false,
-    Default = 1,
-})
-
--- Add Auto Killing
-local AutoKillToggle = Tabs.Killing:CreateToggle("AutoKill", {
-    Title = "Auto Kill",
-    Default = false
-})
-
-AutoKillToggle:OnChanged(function()
-    local whitelist = WhitelistDropdown.Value
-    if AutoKillToggle.Value then
-        -- Start auto killing other players
-        while AutoKillToggle.Value do
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player.Name ~= whitelist then
-                    -- Make the player's HumanoidRootPart invisible and teleport to right hand
-                    local character = player.Character
-                    if character and character:FindFirstChild("HumanoidRootPart") then
-                        local humanoidRootPart = character.HumanoidRootPart
-                        humanoidRootPart.CFrame = game.Players.LocalPlayer.Character["RightHand"].CFrame
-                        humanoidRootPart.Transparency = 1
-                    end
+-- Infinite Jump Toggle
+local InfiniteJumpToggle = Tabs.Main:AddToggle("InfiniteJump", {
+    Title = "Infinite Jump",
+    Description = "Enable/Disable Infinite Jump for the player.",
+    Default = false,
+    Callback = function(State)
+        local humanoid = game.Players.LocalPlayer.Character:WaitForChild("Humanoid")
+        if State then
+            humanoid.JumpHeight = 50
+            humanoid:GetPropertyChangedSignal("Jumping"):Connect(function()
+                if humanoid.Jumping then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+                    humanoid:Move(Vector3.new(0, 0, 0))
                 end
-            end
-            wait(0.5)  -- Adjust the wait time as needed
+            end)
+        else
+            humanoid.JumpHeight = 50
         end
     end
-end)
-
--- Add Target Player Killing
-local TargetPlayerDropdown = Tabs.Killing:CreateDropdown("SelectPlayer", {
-    Title = "Select Player",
-    Values = PlayersList,
-    Multi = false,
-    Default = 1,
 })
 
-local KillPlayerToggle = Tabs.Killing:CreateToggle("KillPlayer", {
-    Title = "Kill Player",
-    Default = false
+-- Auto Farm/Teleport Tab
+Tabs.AutoFarm:AddParagraph({
+    Title = "Island Teleport",
+    Content = "Select an island to teleport to and enable teleportation."
 })
 
-KillPlayerToggle:OnChanged(function()
-    if KillPlayerToggle.Value then
-        local targetPlayer = TargetPlayerDropdown.Value
-        local targetCharacter = game.Players:FindFirstChild(targetPlayer) and game.Players[targetPlayer].Character
-        if targetCharacter then
-            -- Start killing the selected player (teleport their HumanoidRootPart continuously to your RightHand)
-            while KillPlayerToggle.Value and targetCharacter do
-                local humanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
-                if humanoidRootPart then
-                    -- Teleport the HumanoidRootPart to the RightHand continuously
-                    humanoidRootPart.CFrame = game.Players.LocalPlayer.Character["RightHand"].CFrame
-                end
-                wait(0.1)  -- This will teleport every 0.1 seconds, adjust the speed if needed
+-- Dropdown to choose island
+local IslandDropdown = Tabs.AutoFarm:AddDropdown("ChooseIsland", {
+    Title = "Choose Island",
+    Description = "Select the island you want to teleport to.",
+    Options = {
+        "Tiny Island",
+        "Frozen Island",
+        "Mythical Island",
+        "Inferno Island",
+        "Legends Island",
+        "Muscle King Island",
+        "Secret Area"
+    },
+    Default = "Tiny Island",
+    Callback = function(selectedIsland)
+        game.ReplicatedStorage.SelectedIsland = selectedIsland
+    end
+})
+
+-- Teleport Toggle for Island
+local TeleportToggle = Tabs.AutoFarm:AddToggle("TeleportToIsland", {
+    Title = "Teleport To Island",
+    Description = "Enable to teleport to the selected island.",
+    Default = false,
+    Callback = function(State)
+        if State then
+            local selectedIsland = game.ReplicatedStorage.SelectedIsland.Value
+            local islandPosition
+
+            if selectedIsland == "Tiny Island" then
+                islandPosition = CFrame.new(-38, 5, 1884) 
+            elseif selectedIsland == "Frozen Island" then
+                islandPosition = CFrame.new(-2623, 5, -409)
+            elseif selectedIsland == "Mythical Island" then
+                islandPosition = CFrame.new(2251, 5, 1073)
+            elseif selectedIsland == "Inferno Island" then
+                islandPosition = CFrame.new(-6759, 5, -1285)
+            elseif selectedIsland == "Legends Island" then
+                islandPosition = CFrame.new(4603, 989, -3898)
+            elseif selectedIsland == "Muscle King Island" then
+                islandPosition = CFrame.new(-8626, 15, -5730)
+            elseif selectedIsland == "Secret Area" then
+                islandPosition = CFrame.new(-2596, -1, 5738)
             end
+
+            game.Players.LocalPlayer.Character:MoveTo(islandPosition.Position)
         end
     end
-end)
-
-
--- Add Spy Section
-local SpyToggle = Tabs.Killing:CreateToggle("Spy", {
-    Title = "Spy",
-    Default = false
 })
 
-SpyToggle:OnChanged(function()
-    if SpyToggle.Value then
-        local targetPlayer = TargetPlayerDropdown.Value
-        local targetCharacter = game.Players:FindFirstChild(targetPlayer) and game.Players[targetPlayer].Character
-        if targetCharacter then
-            local targetHumanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
-            if targetHumanoidRootPart then
-                -- Move the camera to the target player's HumanoidRootPart (first-person POV)
-                game.Workspace.CurrentCamera.CameraSubject = targetCharacter.Humanoid
-                game.Workspace.CurrentCamera.CameraType = Enum.CameraType.Attach
-            end
-        end
-    else
-        -- Reset to normal camera mode
-        game.Workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-        game.Workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+-- Teleport To Rock Section
+Tabs.AutoFarm:AddParagraph({
+    Title = "Teleport To Rock",
+    Content = "Select a rock to teleport to and enable teleportation."
+})
+
+-- Dropdown to select rock
+local RockDropdown = Tabs.AutoFarm:AddDropdown("SelectRock", {
+    Title = "Select Rock",
+    Description = "Choose the rock you want to teleport to.",
+    Options = {
+        "Frozen Rock",
+        "Mythical Rock",
+        "Inferno Rock",
+        "Legends Rock",
+        "Muscle King Mountain"
+    },
+    Default = "Frozen Rock",
+    Callback = function(selectedRock)
+        game.ReplicatedStorage.SelectedRock = selectedRock
     end
-end)
+})
+
+-- Teleport Toggle for Rock
+local TeleportRockToggle = Tabs.AutoFarm:AddToggle("TeleportToRock", {
+    Title = "Teleport To Rock",
+    Description = "Enable to teleport to the selected rock.",
+    Default = false,
+    Callback = function(State)
+        if State then
+            local selectedRock = game.ReplicatedStorage.SelectedRock.Value
+            local rockPosition
+
+            if selectedRock == "Frozen Rock" then
+                rockPosition = game.Workspace:WaitForChild("Frozen Rock").CFrame
+            elseif selectedRock == "Mythical Rock" then
+                rockPosition = game.Workspace:WaitForChild("Mythical Rock").CFrame
+            elseif selectedRock == "Inferno Rock" then
+                rockPosition = game.Workspace:WaitForChild("Inferno Rock").CFrame
+            elseif selectedRock == "Legends Rock" then
+                rockPosition = game.Workspace:WaitForChild("Legends Rock").CFrame
+            elseif selectedRock == "Muscle King Mountain" then
+                rockPosition = game.Workspace:WaitForChild("Muscle King Mountain").CFrame
+            end
+
+            game.Players.LocalPlayer.Character:MoveTo(rockPosition.Position)
+        end
+    end
+})
