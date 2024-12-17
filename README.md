@@ -2,6 +2,7 @@ local Library = loadstring(game:HttpGetAsync("https://github.com/ActualMasterOog
 local SaveManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/SaveManager.luau"))()
 local InterfaceManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/InterfaceManager.luau"))()
 
+-- Create the Fluent Window
 local Window = Library:CreateWindow{
     Title = `Slash Hub`,
     SubTitle = "",
@@ -13,7 +14,8 @@ local Window = Library:CreateWindow{
     Theme = "Dark",
     MinimizeKey = Enum.KeyCode.RightControl -- Used when theres no MinimizeKeybind
 }
--- Create tabs
+
+-- Create Tabs
 local Tabs = {
     Main = Window:CreateTab{
         Title = "Home",
@@ -38,8 +40,59 @@ Library:Notify{
     Duration = 5 -- Set to nil to make the notification not disappear
 }
 
--- Auto Farm Section
--- Auto Weight Toggle
+-- Create Transparent Toggle Icon
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create ImageButton (Icon) to toggle transparency
+local toggleButton = Instance.new("ImageButton")
+toggleButton.Size = UDim2.new(0, 50, 0, 50)  -- Size of the icon
+toggleButton.Position = UDim2.new(0.5, -25, 0.5, -25)  -- Center the icon
+toggleButton.BackgroundTransparency = 1  -- No background
+toggleButton.Image = "rbxassetid://95279616007991"  -- Your custom icon ID
+toggleButton.Parent = screenGui
+
+local isTransparent = false  -- Variable to track transparency state
+
+-- Function to toggle the transparency of the main window
+local function toggleTransparency()
+    if isTransparent then
+        -- Set the Fluent window to visible
+        Window.BackgroundTransparency = 0
+    else
+        -- Set the Fluent window to transparent
+        Window.BackgroundTransparency = 1
+    end
+    isTransparent = not isTransparent  -- Toggle state
+end
+
+-- Connect the button to the toggle function
+toggleButton.MouseButton1Click:Connect(toggleTransparency)
+
+-- Track window minimize state
+local isMinimized = false
+
+-- Function to handle when the window is minimized
+Window.Minimize = function()
+    isMinimized = true
+    -- When minimized, set Fluent window to transparent
+    Window.BackgroundTransparency = 1
+end
+
+-- Function to restore visibility when the icon is clicked
+toggleButton.MouseButton1Click:Connect(function()
+    if isMinimized then
+        -- If minimized, restore the window and make it visible
+        isMinimized = false
+        Window.BackgroundTransparency = 0
+    end
+    -- If not minimized, toggle the transparency as usual
+    toggleTransparency()
+end)
+
+-- Your existing AutoFarm, Killing, and other sections would go here...
+
+-- Example AutoFarm Toggle
 local AutoWeightToggle = Tabs.AutoFarm:CreateToggle("AutoWeight", {
     Title = "Auto Weight",
     Default = false
