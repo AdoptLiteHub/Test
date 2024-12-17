@@ -1,3 +1,4 @@
+
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
@@ -55,7 +56,9 @@ local WalkSpeedSlider = Tabs.Main:AddSlider("WalkSpeed", {
     Max = 1000,
     Rounding = 1,
     Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+        end
     end
 })
 
@@ -68,7 +71,9 @@ local JumpPowerSlider = Tabs.Main:AddSlider("JumpPower", {
     Max = 1000,
     Rounding = 1,
     Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+        end
     end
 })
 
@@ -125,26 +130,28 @@ local TeleportToggle = Tabs.AutoFarm:AddToggle("TeleportToIsland", {
     Default = false,
     Callback = function(State)
         if State then
-            local selectedIsland = game.ReplicatedStorage.SelectedIsland.Value
+            local selectedIsland = game.ReplicatedStorage:WaitForChild("SelectedIsland")
             local islandPosition
 
-            if selectedIsland == "Tiny Island" then
+            if selectedIsland.Value == "Tiny Island" then
                 islandPosition = CFrame.new(-38, 5, 1884) 
-            elseif selectedIsland == "Frozen Island" then
+            elseif selectedIsland.Value == "Frozen Island" then
                 islandPosition = CFrame.new(-2623, 5, -409)
-            elseif selectedIsland == "Mythical Island" then
+            elseif selectedIsland.Value == "Mythical Island" then
                 islandPosition = CFrame.new(2251, 5, 1073)
-            elseif selectedIsland == "Inferno Island" then
+            elseif selectedIsland.Value == "Inferno Island" then
                 islandPosition = CFrame.new(-6759, 5, -1285)
-            elseif selectedIsland == "Legends Island" then
+            elseif selectedIsland.Value == "Legends Island" then
                 islandPosition = CFrame.new(4603, 989, -3898)
-            elseif selectedIsland == "Muscle King Island" then
+            elseif selectedIsland.Value == "Muscle King Island" then
                 islandPosition = CFrame.new(-8626, 15, -5730)
-            elseif selectedIsland == "Secret Area" then
+            elseif selectedIsland.Value == "Secret Area" then
                 islandPosition = CFrame.new(-2596, -1, 5738)
             end
 
-            game.Players.LocalPlayer.Character:MoveTo(islandPosition.Position)
+            if islandPosition then
+                game.Players.LocalPlayer.Character:MoveTo(islandPosition.Position)
+            end
         end
     end
 })
@@ -179,22 +186,24 @@ local TeleportRockToggle = Tabs.AutoFarm:AddToggle("TeleportToRock", {
     Default = false,
     Callback = function(State)
         if State then
-            local selectedRock = game.ReplicatedStorage.SelectedRock.Value
+            local selectedRock = game.ReplicatedStorage:WaitForChild("SelectedRock")
             local rockPosition
 
-            if selectedRock == "Frozen Rock" then
+            if selectedRock.Value == "Frozen Rock" then
                 rockPosition = game.Workspace:WaitForChild("Frozen Rock").CFrame
-            elseif selectedRock == "Mythical Rock" then
+            elseif selectedRock.Value == "Mythical Rock" then
                 rockPosition = game.Workspace:WaitForChild("Mythical Rock").CFrame
-            elseif selectedRock == "Inferno Rock" then
+            elseif selectedRock.Value == "Inferno Rock" then
                 rockPosition = game.Workspace:WaitForChild("Inferno Rock").CFrame
-            elseif selectedRock == "Legends Rock" then
+            elseif selectedRock.Value == "Legends Rock" then
                 rockPosition = game.Workspace:WaitForChild("Legends Rock").CFrame
-            elseif selectedRock == "Muscle King Mountain" then
+            elseif selectedRock.Value == "Muscle King Mountain" then
                 rockPosition = game.Workspace:WaitForChild("Muscle King Mountain").CFrame
             end
 
-            game.Players.LocalPlayer.Character:MoveTo(rockPosition.Position)
+            if rockPosition then
+                game.Players.LocalPlayer.Character:MoveTo(rockPosition.Position)
+            end
         end
     end
 })
