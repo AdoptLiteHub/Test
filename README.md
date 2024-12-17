@@ -24,7 +24,7 @@ Tabs.Main:AddParagraph({
 
 Tabs.Main:AddButton({
     Title = "Copy Discord Server Link",
-    Description = "Copies the Discord server link to your clipboard.",
+    Description = ".",
     Callback = function()
         setclipboard("https://discord.gg/RHJECBgy")
         
@@ -195,6 +195,104 @@ local TeleportRockToggle = Tabs.AutoFarm:AddToggle("TeleportToRock", {
             end
 
             game.Players.LocalPlayer.Character:MoveTo(rockPosition.Position)
+        end
+    end
+})
+
+-- Farming Section (Auto Weight, Auto Pushups, etc.)
+Tabs.AutoFarm:AddParagraph({
+    Title = "Farming",
+    Content = "."
+})
+
+-- Auto Weight Toggle
+local AutoWeightToggle = Tabs.AutoFarm:AddToggle("AutoWeight", {
+    Title = "Auto Weight",
+    Description = "Enable to equip and use the Weight tool infinitely.",
+    Default = false,
+    Callback = function(State)
+        local player = game.Players.LocalPlayer
+        local tool = player.Backpack:FindFirstChild("Weight")
+        if State then
+            while State do
+                if not tool then
+                    tool = player.Backpack:FindFirstChild("Weight")
+                end
+                if tool then
+                    tool.Parent = player.Character
+                    tool:Activate()
+                end
+                wait(0.1)
+            end
+        end
+    end
+})
+
+-- Auto Pushups Toggle
+local AutoPushupsToggle = Tabs.AutoFarm:AddToggle("AutoPushups", {
+    Title = "Auto Pushups",
+    Description = "Enable to equip and use the Pushups tool infinitely.",
+    Default = false,
+    Callback = function(State)
+        local player = game.Players.LocalPlayer
+        local tool = player.Backpack:FindFirstChild("Pushups")
+        if State then
+            while State do
+                if not tool then
+                    tool = player.Backpack:FindFirstChild("Pushups")
+                end
+                if tool then
+                    tool.Parent = player.Character
+                    tool:Activate()
+                end
+                wait(0.1)
+            end
+        end
+    end
+})
+
+-- Auto Situps Toggle
+local AutoSitupsToggle = Tabs.AutoFarm:AddToggle("AutoSitups", {
+    Title = "Auto Situps",
+    Description = "Enable to equip and use the Situps tool infinitely.",
+    Default = false,
+    Callback = function(State)
+        local player = game.Players.LocalPlayer
+        local tool = player.Backpack:FindFirstChild("Situps")
+        if State then
+            while State do
+                if not tool then
+                    tool = player.Backpack:FindFirstChild("Situps")
+                end
+                if tool then
+                    tool.Parent = player.Character
+                    tool:Activate()
+                end
+                wait(0.1)
+            end
+        end
+    end
+})
+
+-- Auto Handstands Toggle
+local AutoHandstandsToggle = Tabs.AutoFarm:AddToggle("AutoHandstands", {
+    Title = "Auto Handstands",
+    Description = "Enable to equip and use the Handstands tool infinitely.",
+    Default = false,
+    Callback = function(State)
+        local player = game.Players.LocalPlayer
+        local tool = player.Backpack:FindFirstChild("Handstands")
+        if State then
+            while State do
+                if not tool then
+                    tool = player.Backpack:FindFirstChild("Handstands")
+                end
+                if tool then
+                    tool.Parent = player.Character
+                    tool:Activate()
+                end
+                wait(0.1)
+            end
         end
     end
 })
