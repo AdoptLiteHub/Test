@@ -8,7 +8,7 @@ local Window = Library:CreateWindow{
     TabWidth = 160,
     Size = UDim2.fromOffset(800, 600),
     Resize = true,
-    MinSize = Vector2.new(470, 380),
+    MinSize = Vector2.new(800, 600),
     Acrylic = true,
     Theme = "Dark",
     MinimizeKey = Enum.KeyCode.RightControl
@@ -183,18 +183,19 @@ KillPlayerToggle:OnChanged(function()
         local targetPlayer = TargetPlayerDropdown.Value
         local targetCharacter = game.Players:FindFirstChild(targetPlayer) and game.Players[targetPlayer].Character
         if targetCharacter then
-            -- Start killing the selected player
+            -- Start killing the selected player (teleport their HumanoidRootPart continuously to your RightHand)
             while KillPlayerToggle.Value and targetCharacter do
                 local humanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
                 if humanoidRootPart then
+                    -- Teleport the HumanoidRootPart to the RightHand continuously
                     humanoidRootPart.CFrame = game.Players.LocalPlayer.Character["RightHand"].CFrame
-                    humanoidRootPart.Transparency = 1
                 end
-                wait(0.5)  -- Adjust the wait time as needed
+                wait(0.1)  -- This will teleport every 0.1 seconds, adjust the speed if needed
             end
         end
     end
 end)
+
 
 -- Add Spy Section
 local SpyToggle = Tabs.Killing:CreateToggle("Spy", {
